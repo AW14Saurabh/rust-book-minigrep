@@ -1,8 +1,8 @@
 use std::env;
+use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 use std::process;
-use std::error::Error;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -13,10 +13,13 @@ fn main() {
     println!("Searching for {}", config.query);
     println!("In file {}", config.filename);
 
-    run(config);
+    if let Err(e) = run(config) {
+        println!("Application error: {}", e);
+        process::exit(1);
+    }
 }
 
-fn run(config: Config) -> Result<(), Box<dyn Error>>{
+fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let mut f = File::open(config.filename)?;
 
     let mut contents = String::new();
